@@ -2,7 +2,10 @@ package router
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -44,4 +47,25 @@ func (r *Router) Create() {
 		ReadTimeout:  15 * time.Second,
 		IdleTimeout:  15 * time.Second,
 	}
+}
+
+// Serve takes the default server configuration and runs it in the main execution
+// context. It also optionally sets up the server configuration if it hasn't been
+// setup already.
+func (r *Router) Serve() {
+	if r.server == nil {
+		r.Create()
+	}
+
+	go func() {
+		log.Println("Now serving...")
+		log.Fatal(r.server.ListenAndServe())
+	}()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, os.Kill)
+
+	<-c
+
+	log.Println("\nServer shutting down. Goodbye...")
 }
