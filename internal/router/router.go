@@ -34,6 +34,9 @@ func (r *Router) Create() {
 	// Use firebase authentication middleware.
 	router.Use(r.firebase.AuthMiddleware)
 
+	// Routes.
+	router.HandleFunc("/test", authTestHandler).Methods(http.MethodGet)
+
 	r.server = &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf("%s:%d", r.address, r.port),
