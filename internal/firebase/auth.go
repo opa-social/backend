@@ -23,7 +23,7 @@ func (c *Controller) AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Validate token against Firebase.
-		_, err = c.client.VerifyIDToken(context.Background(), string(body))
+		_, err = c.Client.VerifyIDToken(context.Background(), string(body))
 		if err != nil {
 			http.Error(w, "Invalid token!", http.StatusUnauthorized)
 			log.Printf("Failed to authenticate user from %s", r.RemoteAddr)

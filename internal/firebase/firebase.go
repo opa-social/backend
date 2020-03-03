@@ -10,8 +10,10 @@ import (
 
 // Controller contains app and client instances for Firebase related requests.
 type Controller struct {
-	instance *firebase.App
-	client   *auth.Client
+	// Instance is the instance of the Firebase app.
+	Instance *firebase.App
+	// Client is the authentication instances used by the controller.
+	Client *auth.Client
 }
 
 // New creates a new Firebase controller. Requires that GOOGLE_APPLICATION_CREDENTIALS
@@ -28,7 +30,7 @@ func New() Controller {
 	}
 
 	return Controller{
-		instance: app,
-		client:   client,
+		Instance: app,
+		Client:   client,
 	}
 }
