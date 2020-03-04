@@ -2,7 +2,6 @@ package firebase
 
 import (
 	"context"
-	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -11,19 +10,18 @@ import (
 // HTTP requests against Firebase authentication.
 func (c *Controller) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
-		// Read JWT from request body.
-		body, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Malformed JWT", http.StatusBadRequest)
-			log.Printf("Got malformed JWT from %s", r.RemoteAddr)
+		authHeader := r.Header.Values("Authorization")
+		if len(authHeader) < 2 {
+			http.Error(w, "No token provided", http.StatusBadRequest)
+			log.Printf("Client at %s sent empty token or invalid header", r.RemoteAddr)
 
 			return
 		}
 
+		// Get the token from the header. JWT is sent as "Authorization: Bearer <token>"
+		// so "<token>" is always the second value in the array.
 		// Validate token against Firebase.
-		_, err = c.Client.VerifyIDToken(context.Background(), string(body))
+		_, err := c.Client.VerifyIDToken(context.Background(), authHeader[1])
 		if err != nil {
 			http.Error(w, "Invalid token!", http.StatusUnauthorized)
 			log.Printf("Failed to authenticate user from %s", r.RemoteAddr)
