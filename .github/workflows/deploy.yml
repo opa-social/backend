@@ -1,0 +1,42 @@
+name: Deploy Image to Google Container Registry
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '.vscode/'
+      - 'tools'
+      - 'LICENSE'
+      - 'README.md'
+
+env:
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+  GKE_EMAIL: ${{ secrets.GKE_EMAIL }}
+  GKE_KEY: ${{ secrets.GKE_KEY }}
+  SHA: ${{ github.sha }}
+  GKE_ZONE: us-west2-a
+  IMAGE: opa-backend
+  REGISTRY_HOSTNAME: gcr.io
+
+jobs:
+  build-and-publish:
+    name: Build and deploy image to GCR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.GKE_EMAIL }}
+          service_account_key: ${{ secrets.GKE_KEY }}
+      - run: |
+          gcloud auth configure-docker
+      - name: Build image
+        run: |
+          docker build -t "$REGISTRY_HOSTNAME"/"$GKE_PROJECT"/"$IMAGE":"$GITHUB_SHA" \
+            --build-arg GITHUB_SHA="$GITHUB_SHA" \
+            --build-arg GITHUB_REF="$GITHUB_REF" .
+      - name: Publish
+        run: |
+          docker push $REGISTRY_HOSTNAME/$GKE_PROJECT/$IMAGE:$GITHUB_SHA
