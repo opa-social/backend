@@ -38,7 +38,9 @@ func (r *Router) Create() {
 	router.Use(r.firebase.AuthMiddleware)
 
 	// Routes.
-	router.HandleFunc("/test", authTestHandler).Methods(http.MethodGet)
+	router.HandleFunc("/event/new", r.newEventHandler).
+		Methods(http.MethodPost).
+		Headers("Content-Type", "application/json;charset=utf-8")
 
 	r.server = &http.Server{
 		Handler:      router,
