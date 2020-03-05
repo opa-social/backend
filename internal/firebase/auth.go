@@ -23,13 +23,16 @@ func (c *Controller) AuthMiddleware(next http.Handler) http.Handler {
 		// Get the token from the header. JWT is sent as "Authorization: Bearer <token>"
 		// so "<token>" is always the second value in the array.
 		// Validate token against Firebase.
-		_, err := c.Client.VerifyIDToken(context.Background(), authHeader[1])
+		user, err := c.Client.VerifyIDToken(context.Background(), authHeader[1])
 		if err != nil {
 			http.Error(w, "Invalid token!", http.StatusUnauthorized)
 			log.Printf("Failed to authenticate user from %s with error \"%s\"", r.RemoteAddr, err)
 
 			return
 		}
+
+		// Add user's UID as a custom header to forwarder response.
+		r.Header.Add("X-OPA-UID", user.UID)
 
 		next.ServeHTTP(w, r)
 	})
