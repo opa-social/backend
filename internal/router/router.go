@@ -58,7 +58,7 @@ func (r *Router) Serve() {
 	}
 
 	go func() {
-		log.Println("Now serving...")
+		log.Printf("Now serving on %s:%d...\n", r.address, r.port)
 		log.Fatal(r.server.ListenAndServe())
 	}()
 
@@ -67,5 +67,6 @@ func (r *Router) Serve() {
 
 	<-c
 
-	log.Println("\nServer shutting down. Goodbye...")
+	fmt.Print("\n")
+	log.Println("Server shutting down. Goodbye...")
 }
