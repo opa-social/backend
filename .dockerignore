@@ -1,0 +1,22 @@
+# Git folders and files.
+.git/
+.gitignore
+
+# Human readable files.
+LICENSE
+README.md
+
+# Editor configurations.
+.vscode/
+
+# Local environment files.
+**/*.env
+
+# Tooling directory.
+tools/
+
+# Misc. executables.
+cmd/backend/backend
+
+# Dockerfiles
+**/Dockerfile
