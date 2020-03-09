@@ -41,6 +41,10 @@ func (r *Router) Create() {
 	router.HandleFunc("/event/new", r.newEventHandler).
 		Methods(http.MethodPost).
 		Headers("Content-Type", "application/json;charset=utf-8")
+	router.HandleFunc("/event/{event:[A-Za-z]{5}}/join", r.joinEventHandler).
+		Methods(http.MethodPost)
+	router.HandleFunc("/event/{event:[A-Za-z]{5}}/matches", r.getEventMatches).
+		Methods(http.MethodGet)
 
 	r.server = &http.Server{
 		Handler:      router,

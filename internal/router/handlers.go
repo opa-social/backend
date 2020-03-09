@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/opa-social/backend/internal/firebase"
 )
 
@@ -39,4 +40,17 @@ func (router *Router) newEventHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	json.NewEncoder(w).Encode(response)
+}
+
+func (router *Router) joinEventHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("User %s joined event %s", r.Header.Get("X-OPA-UID"), mux.Vars(r)["event"])
+
+	w.WriteHeader(http.StatusAccepted)
+}
+
+func (router *Router) getEventMatches(w http.ResponseWriter, r *http.Request) {
+	uid := r.Header.Get("X-OPA-UID")
+	eventID := mux.Vars(r)["event"]
+
+	log.Printf("User %s wants matches for event %s", uid, eventID)
 }
