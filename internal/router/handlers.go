@@ -45,7 +45,7 @@ func (router *Router) newEventHandler(w http.ResponseWriter, r *http.Request) {
 func (router *Router) joinEventHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("User %s joined event %s", r.Header.Get("X-OPA-UID"), mux.Vars(r)["event"])
 
-	w.WriteHeader(http.StatusAccepted)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (router *Router) getEventMatches(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +54,7 @@ func (router *Router) getEventMatches(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Request for matches from %s for event %s", uid, eventID)
 
-	matches, err := router.firebase.GetUserSelection(5)
+	matches, err := router.firebase.GetUserSelection(5, eventID)
 	if err != nil {
 		log.Printf("Could not create list of matches because \"%s\"", err)
 		http.Error(w, "Could not get list of matches", http.StatusInternalServerError)

@@ -15,10 +15,13 @@ type MatchedUser struct {
 }
 
 // GetUserSelection gets a number of ordered users from the database.
-func (c *Controller) GetUserSelection(size int) ([]MatchedUser, error) {
-	matches := make([]MatchedUser, size)
+func (c *Controller) GetUserSelection(size int, eventID string) ([]*MatchedUser, error) {
+	var matches = []*MatchedUser{}
 
-	query, err := c.Database.NewRef("/users").OrderByKey().LimitToFirst(size).GetOrdered(context.Background())
+	query, err := c.Database.NewRef(fmt.Sprintf("/events/%s/users", eventID)).
+		OrderByKey().
+		LimitToFirst(size).
+		GetOrdered(context.Background())
 	if err != nil {
 		log.Println("Could not get ref to /users")
 		return nil, fmt.Errorf("Could not access /users in database")
@@ -27,13 +30,13 @@ func (c *Controller) GetUserSelection(size int) ([]MatchedUser, error) {
 	for _, m := range query {
 		match := &MatchedUser{}
 
-		err = m.Unmarshal(match)
+		err = c.Database.NewRef("/users").Child(m.Key()).Get(context.Background(), match)
 		if err != nil {
 			log.Println("Could not unmarshal match.")
 			continue // Skip this iteration if unmarshaller didn't work.
 		}
 
-		matches = append(matches, *match)
+		matches = append(matches, match)
 	}
 
 	return matches, nil
