@@ -52,5 +52,16 @@ func (router *Router) getEventMatches(w http.ResponseWriter, r *http.Request) {
 	uid := r.Header.Get("X-OPA-UID")
 	eventID := mux.Vars(r)["event"]
 
-	log.Printf("User %s wants matches for event %s", uid, eventID)
+	log.Printf("Request for matches from %s for event %s", uid, eventID)
+
+	matches, err := router.firebase.GetUserSelection(5)
+	if err != nil {
+		log.Printf("Could not create list of matches because \"%s\"", err)
+		http.Error(w, "Could not get list of matches", http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	json.NewEncoder(w).Encode(matches)
 }
