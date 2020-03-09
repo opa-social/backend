@@ -13,7 +13,6 @@ EXPOSE 9000/tcp
 VOLUME [ "/config" ]
 
 # Environment variables requires by application. Default values.
-ENV GOOGLE_APPLICATION_CREDENTIALS "/config/google-services.json"
 ENV FIREBASE_CONFIG "/config/firebase-config.json"
 
 WORKDIR /
