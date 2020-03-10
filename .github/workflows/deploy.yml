@@ -18,6 +18,7 @@ env:
   GKE_ZONE: us-west2-a
   IMAGE: opa-backend
   REGISTRY_HOSTNAME: gcr.io
+  FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONIFG }}
 
 jobs:
   build-and-publish:
@@ -25,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - run: |
+          echo "$FIREBASE_CONFIG" > firebase-config.json
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
