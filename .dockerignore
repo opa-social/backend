@@ -9,8 +9,10 @@ README.md
 # Editor configurations.
 .vscode/
 
-# Local environment files.
+# Local and config environment files, but keep firebase-config.json.
 **/*.env
+**/*.json
+!firebase-config.json
 
 # Tooling directory.
 tools/

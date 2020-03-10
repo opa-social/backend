@@ -10,11 +10,10 @@ FROM scratch
 
 EXPOSE 9000/tcp
 
-VOLUME [ "/config" ]
-
 # Environment variables requires by application. Default values.
-ENV FIREBASE_CONFIG "/config/firebase-config.json"
+ENV FIREBASE_CONFIG "/firebase-config.json"
 
 WORKDIR /
 COPY --from=build /go/src/backend /
+COPY --from=build /go/src/firebase-config.json /
 CMD [ "/backend" ]
