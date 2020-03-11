@@ -24,17 +24,17 @@ type Controller struct {
 func New() Controller {
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
-		log.Fatal("Could not initialize Firebase SDK")
+		log.Fatalf("Could not initialize Firebase SDK: \"%s\"", err)
 	}
 
 	client, err := app.Auth(context.Background())
 	if err != nil {
-		log.Fatal("Could not authenticate with Firebase auth")
+		log.Fatalf("Could not authenticate with Firebase auth:  \"%s\"", err)
 	}
 
 	db, err := app.Database(context.Background())
 	if err != nil {
-		log.Fatal("Could not authenticate with Firebase database")
+		log.Fatalf("Could not authenticate with Firebase database: \"%s\"", err)
 	}
 
 	return Controller{
