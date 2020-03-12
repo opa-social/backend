@@ -9,7 +9,12 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/golang/protobuf v1.3.4 // indirect
 	github.com/gorilla/mux v1.7.4
+	github.com/lucasb-eyer/go-colorful v1.0.3 // indirect
+	github.com/muesli/clusters v0.0.0-20190807044042-ba9c57dd9228 // indirect
+	github.com/muesli/gamut v0.0.0-20190807050624-0d3f7d26a44e
+	github.com/muesli/kmeans v0.0.0-20190917235210-80dfc71e6c5a // indirect
 	github.com/urfave/cli/v2 v2.1.1
+	github.com/xrash/smetrics v0.0.0-20170218160415-a3153f7040e9 // indirect
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
 	golang.org/x/tools v0.0.0-20200227222343-706bc42d1f0d // indirect
 	google.golang.org/api v0.19.0 // indirect
