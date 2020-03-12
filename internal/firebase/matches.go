@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+
+	"github.com/opa-social/backend/internal/colors"
 )
 
 // MatchedUser is a struct containing information for a matching user.
@@ -14,8 +16,17 @@ type MatchedUser struct {
 	Company string `json:"company"`
 }
 
+// MatchList is a struct containing the fields for the list of matches for
+// the current user and the color associated with their group.
+type MatchList struct {
+	// Color is the color for the given group of matches.
+	Color string `json:"color"`
+	// Matches is the list of matches for the current user.
+	Matches []*MatchedUser `json:"matches"`
+}
+
 // GetUserSelection gets a number of ordered users from the database.
-func (c *Controller) GetUserSelection(size int, eventID string) ([]*MatchedUser, error) {
+func (c *Controller) GetUserSelection(size int, eventID string) (MatchList, error) {
 	var matches = []*MatchedUser{}
 
 	query, err := c.Database.NewRef(fmt.Sprintf("/events/%s/users", eventID)).
@@ -24,7 +35,7 @@ func (c *Controller) GetUserSelection(size int, eventID string) ([]*MatchedUser,
 		GetOrdered(context.Background())
 	if err != nil {
 		log.Println("Could not get ref to /users")
-		return nil, fmt.Errorf("Could not access /users in database")
+		return MatchList{}, fmt.Errorf("Could not access /users in database")
 	}
 
 	for _, m := range query {
@@ -39,5 +50,8 @@ func (c *Controller) GetUserSelection(size int, eventID string) ([]*MatchedUser,
 		matches = append(matches, match)
 	}
 
-	return matches, nil
+	return MatchList{
+		Color:   colors.GenerateRandomColors(1)[0],
+		Matches: matches,
+	}, nil
 }
