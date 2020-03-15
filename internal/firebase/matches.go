@@ -10,10 +10,14 @@ import (
 
 // MatchedUser is a struct containing information for a matching user.
 type MatchedUser struct {
+	// UID is the UID of the matched user.
+	UID string `json:"uid"`
 	// Name is the display name for the user.
 	Name string `json:"name"`
 	// Company is the company name that the user works for.
 	Company string `json:"company"`
+	// Phone is the phone number for the current user.
+	Phone string `json:"phone"`
 }
 
 // MatchList is a struct containing the fields for the list of matches for
@@ -47,6 +51,7 @@ func (c *Controller) GetUserSelection(size int, eventID string) (MatchList, erro
 			continue // Skip this iteration if unmarshaller didn't work.
 		}
 
+		match.UID = m.Key()
 		matches = append(matches, match)
 	}
 
