@@ -21,7 +21,7 @@ func colorToString(c color.Color) string {
 // GenerateRandomColors creates a set of n random pastelle colors and converts them
 // to their hex string represenatation.
 func GenerateRandomColors(n int) []string {
-	colors := make([]string, n)
+	colors := make([]string, 0, n)
 
 	palette, _ := gamut.Generate(n, gamut.PastelGenerator{})
 	for _, c := range palette {
