@@ -2,6 +2,7 @@ package firebase
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -80,4 +81,69 @@ func (c *Controller) CreateNewEvent(uid string, request *EventRequest) (EventRes
 	return EventResponse{
 		EventID: newID,
 	}, nil
+}
+
+// EventUserResponses contains the list of user responses for the current event.
+type EventUserResponses struct {
+	// ID is the ID of the current event.
+	ID string
+	// Results is a list of all responses from all users in the event.
+	Results []struct {
+		// UID is the ID of the user.
+		UID string
+		// Responses is list of all responses to the current event.
+		Responses []int
+	}
+}
+
+// GetRawResponses returns a 2D slice containing the ordered responses from each user
+// in integer form. This is to extract the relevant data for training.
+func (e EventUserResponses) GetRawResponses() [][]int {
+	rawResponses := make([][]int, 0, len(e.Results))
+
+	for _, r := range e.Results {
+		rawResponses = append(rawResponses, r.Responses)
+	}
+
+	return rawResponses
+}
+
+// UnmarshalJSON is the custom implementation of json.Unmarshal for the EventUserResponses
+// type.
+func (e *EventUserResponses) UnmarshalJSON(data []byte) error {
+	type alias map[string]map[string]int
+	aux := &alias{}
+
+	if err := json.Unmarshal(data, aux); err != nil {
+		return err
+	}
+
+	for k, v := range *aux {
+		responses := make([]int, 0, len(v))
+		for _, i := range v {
+			responses = append(responses, i)
+		}
+
+		e.Results = append(e.Results, struct {
+			UID       string
+			Responses []int
+		}{k, responses})
+	}
+
+	return nil
+}
+
+// GetAllResponses returns the stored the responses for the given event.
+func (c *Controller) GetAllResponses(id string) (EventUserResponses, error) {
+	responses := &EventUserResponses{
+		ID: id,
+	}
+
+	err := c.Database.NewRef(fmt.Sprintf("/events/%s/users", id)).Get(context.Background(), responses)
+	if err != nil {
+		log.Printf("Could not deserialize list of responses for event \"%s\" because \"%s\"", id, err)
+		return *responses, err
+	}
+
+	return *responses, nil
 }
