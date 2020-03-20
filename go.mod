@@ -7,6 +7,7 @@ require (
 	cloud.google.com/go/storage v1.6.0 // indirect
 	firebase.google.com/go v3.12.0+incompatible
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
+	github.com/go-redis/redis/v7 v7.2.0
 	github.com/golang/protobuf v1.3.4 // indirect
 	github.com/gorilla/mux v1.7.4
 	github.com/lucasb-eyer/go-colorful v1.0.3 // indirect
