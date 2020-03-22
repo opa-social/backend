@@ -98,11 +98,16 @@ type EventUserResponses struct {
 
 // GetRawResponses returns a 2D slice containing the ordered responses from each user
 // in integer form. This is to extract the relevant data for training.
-func (e EventUserResponses) GetRawResponses() [][]int {
-	rawResponses := make([][]int, 0, len(e.Results))
+func (e EventUserResponses) GetRawResponses() [][]float64 {
+	rawResponses := make([][]float64, 0, len(e.Results))
 
 	for _, r := range e.Results {
-		rawResponses = append(rawResponses, r.Responses)
+		row := make([]float64, 0, len(r.Responses))
+		for _, v := range r.Responses {
+			row = append(row, float64(v))
+		}
+
+		rawResponses = append(rawResponses, row)
 	}
 
 	return rawResponses
