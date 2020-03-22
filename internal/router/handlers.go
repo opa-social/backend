@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/opa-social/backend/internal/firebase"
+	"github.com/opa-social/backend/internal/matching"
 )
 
 func (router *Router) newEventHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +44,11 @@ func (router *Router) newEventHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (router *Router) joinEventHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("User %s joined event %s", r.Header.Get("X-OPA-UID"), mux.Vars(r)["event"])
+	eventID := mux.Vars(r)["event"]
+	log.Printf("User %s joined event %s", r.Header.Get("X-OPA-UID"), eventID)
+
+	// Signal to match new data.
+	go matching.Match(eventID, router.firebase, router.redis)
 
 	w.WriteHeader(http.StatusOK)
 }
@@ -54,11 +59,9 @@ func (router *Router) getEventMatches(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Request for matches from %s for event %s", uid, eventID)
 
-	matches, err := router.firebase.GetUserSelection(5, eventID)
+	matches, err := matching.GetMatches(uid, eventID, router.firebase, router.redis)
 	if err != nil {
-		log.Printf("Could not create list of matches because \"%s\"", err)
-		http.Error(w, "Could not get list of matches", http.StatusInternalServerError)
-
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
