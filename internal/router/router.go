@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/opa-social/backend/internal/database"
 	"github.com/opa-social/backend/internal/firebase"
 )
 
@@ -17,15 +18,17 @@ type Router struct {
 	address  string
 	port     uint
 	firebase *firebase.Controller
+	redis    *database.Database
 	server   *http.Server
 }
 
 // Setup creates a Router with minimum required values.
-func Setup(address string, port uint, firebase *firebase.Controller) Router {
+func Setup(address string, port uint, firebase *firebase.Controller, redis *database.Database) Router {
 	return Router{
 		address:  address,
 		port:     port,
 		firebase: firebase,
+		redis:    redis,
 	}
 }
 

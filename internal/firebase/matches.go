@@ -60,3 +60,26 @@ func (c *Controller) GetUserSelection(size int, eventID string) (MatchList, erro
 		Matches: matches,
 	}, nil
 }
+
+// GetUsersFromUIDs creates a payload with user information a given list of UIDs.
+func (c *Controller) GetUsersFromUIDs(uids []string, color string) (MatchList, error) {
+	matches := make([]*MatchedUser, 0, len(uids))
+
+	for _, u := range uids {
+		user := &MatchedUser{}
+
+		err := c.Database.NewRef("/users").Child(u).Get(context.Background(), user)
+		if err != nil {
+			log.Printf("Could not get uid %s because \"%s\"", u, err)
+			continue // Skip this iteration if unmarshaller didn't work.
+		}
+
+		user.UID = u
+		matches = append(matches, user)
+	}
+
+	return MatchList{
+		Color:   color,
+		Matches: matches,
+	}, nil
+}
