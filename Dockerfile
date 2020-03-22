@@ -20,4 +20,4 @@ ENV FIREBASE_CONFIG "/config/firebase-config.json"
 
 WORKDIR /
 COPY --from=build /go/src/backend /
-CMD [ "/backend" ]
+CMD [ "/backend", "--datastore=redis://datastore:6379" ]
