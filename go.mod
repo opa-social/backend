@@ -11,7 +11,7 @@ require (
 	github.com/golang/protobuf v1.3.4 // indirect
 	github.com/gorilla/mux v1.7.4
 	github.com/lucasb-eyer/go-colorful v1.0.3 // indirect
-	github.com/mpraski/clusters v0.0.0-20171016094157-18104487c312 // indirect
+	github.com/mpraski/clusters v0.0.0-20171016094157-18104487c312
 	github.com/muesli/clusters v0.0.0-20190807044042-ba9c57dd9228 // indirect
 	github.com/muesli/gamut v0.0.0-20190807050624-0d3f7d26a44e
 	github.com/muesli/kmeans v0.0.0-20190917235210-80dfc71e6c5a // indirect

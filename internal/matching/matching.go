@@ -1,6 +1,7 @@
 package matching
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/mpraski/clusters"
@@ -31,4 +32,26 @@ func Match(id string, fb *firebase.Controller, db *database.Database) {
 		log.Printf("Could not store matches because \"%s\"", err)
 		return
 	}
+}
+
+// GetMatches returns the list of matches for the current user based on previously
+// stored group matches in Redis.
+func GetMatches(uid, eid string, fb *firebase.Controller, db *database.Database) (firebase.MatchList, error) {
+	uids, err := db.GetMatchesForUID(uid, eid, 5)
+	if err != nil {
+		return firebase.MatchList{}, fmt.Errorf("Could not contact database for matches")
+	}
+
+	color, err := db.GetColorForGroup(uid, eid)
+	if err != nil {
+		// Fall back to white.
+		color = "FFFFFF"
+	}
+
+	matches, err := fb.GetUsersFromUIDs(uids, color)
+	if err != nil {
+		return firebase.MatchList{}, fmt.Errorf("Could not contact firebase for user data")
+	}
+
+	return matches, nil
 }
